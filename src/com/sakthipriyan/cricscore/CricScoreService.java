@@ -22,9 +22,9 @@ public class CricScoreService extends Service{
 			public void run() {
 				int[] input = {};
 				Request request = new Request(input,new Date());
-				System.out.println("request :" + request);
+				System.out.println(request);
 				Response response = BackEnd.getInstance().fetchData(request);
-				System.out.println("response :" + response);
+				System.out.println(response);
 			}
 		}).start();
 		
