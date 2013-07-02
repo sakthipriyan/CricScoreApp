@@ -32,8 +32,10 @@ public class Score {
 	}
 	
 	public void updateScore(Score score){
-		this.simple = score.simple;
-		this.detail = score.detail;
+		if(this.id == score.id){
+			this.simple = score.simple;
+			this.detail = score.detail;	
+		}
 	}
 
 	public int getId() {
