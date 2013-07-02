@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class MainActivity extends SherlockActivity {
+public class MainActivity extends SherlockListActivity {
 	
 	// For local reference
 	private Context cxt;
