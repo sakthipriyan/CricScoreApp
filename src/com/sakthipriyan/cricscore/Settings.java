@@ -1,9 +1,10 @@
 package com.sakthipriyan.cricscore;
 
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
-public class Settings extends PreferenceActivity {
+import android.os.Bundle;
+
+public class Settings extends SherlockPreferenceActivity {
 
 	@SuppressWarnings("deprecation")
 	@Override
