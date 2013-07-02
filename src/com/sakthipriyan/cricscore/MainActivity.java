@@ -20,6 +20,13 @@ public class MainActivity extends SherlockListActivity {
         setContentView(R.layout.activity_main);
 		cxt = this;
     }
+    
+    
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startService(new Intent(cxt, CricScoreService.class));
+    }
 
 
     @Override
