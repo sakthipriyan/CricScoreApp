@@ -20,11 +20,18 @@ public class CricScoreService extends Service{
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				int[] input = {};
+				int[] input = {585683};
+				int[] empty = {};
 				Request request = new Request(input,new Date());
 				System.out.println(request);
 				Response response = BackEnd.getInstance().fetchData(request);
 				System.out.println(response);
+				System.out.println(Score.getScores(response.getJson()));
+				request = new Request(empty,new Date());
+				System.out.println(request);
+				response = BackEnd.getInstance().fetchData(request);
+				System.out.println(response);
+				System.out.println(Score.getScores(response.getJson()));
 			}
 		}).start();
 		

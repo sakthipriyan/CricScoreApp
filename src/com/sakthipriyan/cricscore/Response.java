@@ -4,17 +4,17 @@ import java.util.Date;
 
 public class Response {
 	
-	private String response;
+	private String json;
 	private Date lastModified;
 
-	public Response(String response, Date lastModified) {
+	public Response(String json, Date lastModified) {
 		super();
-		this.response = response;
+		this.json = json;
 		this.lastModified = lastModified;
 	}
 
-	public String getResponse() {
-		return response;
+	public String getJson() {
+		return json;
 	}
 
 	public Date getLastModified() {
@@ -23,7 +23,7 @@ public class Response {
 
 	@Override
 	public String toString() {
-		return "Response [response=" + response + ", lastModified="
+		return "Response [json=" + json + ", lastModified="
 				+ lastModified + "]";
 	}
 }

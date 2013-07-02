@@ -21,6 +21,7 @@ import android.util.Log;
 public class BackEnd {
 
 	private static final String BASE_URL = "http://cricscore-api.appspot.com/csa";
+	private static final Response NULL = new Response(null,null);
 
 	private static BackEnd instance;
 
@@ -54,7 +55,7 @@ public class BackEnd {
 
 	public Response fetchData(Request request) {
 
-		Response response = null;
+		Response response = NULL;
 
 		HttpGet httpGet = new HttpGet(getURL(request.getMatchIds()));
 		if (request.getLastModified() != null) {
@@ -90,9 +91,9 @@ public class BackEnd {
 				}
 				response = new Response(builder.toString(), lastModified);
 			} else if (statusCode == 304) {
-				Log.i(BackEnd.class.toString(), "No updated");
+				Log.i(BackEnd.class.toString(), "No update");
 			} else {
-				Log.e(BackEnd.class.toString(), "Failed to download file");
+				Log.e(BackEnd.class.toString(), "Failed to download json");
 			}
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
