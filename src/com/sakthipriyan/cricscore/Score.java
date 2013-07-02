@@ -30,6 +30,11 @@ public class Score {
 		this.simple = simple;
 		this.detail = detail;
 	}
+	
+	public void updateScore(Score score){
+		this.simple = score.simple;
+		this.detail = score.detail;
+	}
 
 	public int getId() {
 		return id;
