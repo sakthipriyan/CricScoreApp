@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -38,15 +39,15 @@ public class BackEnd {
 		return instance;
 	}
 
-	private String getURL(int[] matchIds) {
+	private String getURL(List<Integer> list) {
 		StringBuilder url = new StringBuilder(BASE_URL);
-		int length = matchIds.length;
-		if (length > 0) {
+		int size = list.size();
+		if (size > 0) {
 			url.append("?id=");
 		}
-		for (int i = 0; i < length; i++) {
-			url.append(matchIds[i]);
-			if (i < length - 1) {
+		for (int i = 0; i < size; ) {
+			url.append(list.get(i++));
+			if (i < size) {
 				url.append("+");
 			}
 		}

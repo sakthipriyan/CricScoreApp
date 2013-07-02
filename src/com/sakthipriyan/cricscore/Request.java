@@ -1,20 +1,20 @@
 package com.sakthipriyan.cricscore;
 
-import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class Request {
 	
-	private int[] matchIds;
+	private List<Integer> matchIds;
 	private Date lastModified;
 
-	public Request(int[] matchIds, Date lastModified) {
+	public Request(List<Integer> matchIds, Date lastModified) {
 		super();
 		this.matchIds = matchIds;
 		this.lastModified = lastModified;
 	}
 
-	public int[] getMatchIds() {
+	public List<Integer> getMatchIds() {
 		return matchIds;
 	}
 
@@ -24,8 +24,8 @@ public class Request {
 
 	@Override
 	public String toString() {
-		return "Request [matchIds=" + Arrays.toString(matchIds)
-				+ ", lastModified=" + lastModified + "]";
+		return "Request [matchIds=" + matchIds + ", lastModified="
+				+ lastModified + "]";
 	}
 	
 }
