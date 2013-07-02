@@ -1,4 +1,4 @@
-package com.sakthipriyan.cricscore.app;
+package com.sakthipriyan.cricscore;
 
 import android.os.Bundle;
 import android.app.Activity;
