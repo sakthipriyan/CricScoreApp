@@ -5,6 +5,8 @@ import java.util.List;
 
 public class Request {
 	
+	public static final Request NULL = new Request(null,null);	
+	
 	private List<Integer> matchIds;
 	private Date lastModified;
 

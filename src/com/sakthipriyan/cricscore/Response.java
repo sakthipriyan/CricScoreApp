@@ -3,6 +3,7 @@ package com.sakthipriyan.cricscore;
 import java.util.Date;
 
 public class Response {
+	public static final Response NULL = new Response(null,null);
 	
 	private String json;
 	private Date lastModified;
