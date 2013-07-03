@@ -18,10 +18,7 @@
     <string name="info_refresh_desc">for auto updating scores</string>
     
     
-    
-    
-    
-    
+        
     <string-array name="update_freq">
         <item>10 seconds</item>
         <item>20 seconds</item>
@@ -30,15 +27,4 @@
         <item>2 minutes</item>
         <item>5 minutes</item>
     </string-array>
-    <string-array name="update_freq_time">
-    	<item>10000</item>
-    	<item>20000</item>
-    	<item>30000</item>
-    	<item>60000</item>
-    	<item>120000</item>
-    	<item>300000</item>
-    </string-array>
-    
-    
-
 </resources>
