@@ -21,8 +21,8 @@ import android.util.Log;
 
 public class BackEnd {
 
+	private static final String TAG = BackEnd.class.toString();
 	private static final String BASE_URL = "http://cricscore-api.appspot.com/csa";
-	private static final Response NULL = new Response(null,null);
 
 	private static BackEnd instance;
 
@@ -41,11 +41,14 @@ public class BackEnd {
 
 	private String getURL(List<Integer> list) {
 		StringBuilder url = new StringBuilder(BASE_URL);
+		if (list == null) {
+			return url.toString();
+		}
 		int size = list.size();
 		if (size > 0) {
 			url.append("?id=");
 		}
-		for (int i = 0; i < size; ) {
+		for (int i = 0; i < size;) {
 			url.append(list.get(i++));
 			if (i < size) {
 				url.append("+");
@@ -55,8 +58,8 @@ public class BackEnd {
 	}
 
 	public Response fetchData(Request request) {
-
-		Response response = NULL;
+		Log.d(TAG, request.toString());
+		Response response = Response.NULL;
 
 		HttpGet httpGet = new HttpGet(getURL(request.getMatchIds()));
 		if (request.getLastModified() != null) {
@@ -109,6 +112,7 @@ public class BackEnd {
 							"Failed to close the content");
 				}
 		}
+		Log.d(TAG, response.toString());
 		return response;
 	}
 }
