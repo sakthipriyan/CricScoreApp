@@ -1,10 +1,14 @@
 package com.sakthipriyan.cricscore;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,18 +17,19 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+@SuppressLint("UseSparseArrays")
 public class CricScoreService extends Service {
 
 	private static final String TAG = CricScoreService.class.toString();
 	private Date lastModified;
-	private List<Integer> matches;
-	private List<Score> scoresChanged;
+	private Map<Integer, Score> liveScores;
 	private List<Score> listMatches;
 	private Timer timer;
 	private boolean checkboxNotify;
 	private int updateInterval;
 	private IBinder binder;
 	private BackEnd backEnd;
+	private CricScoreAPI api;
 
 	@Override
 	public void onCreate() {
@@ -33,6 +38,8 @@ public class CricScoreService extends Service {
 		this.timer = new Timer("scoreUpdateTimer");
 		this.binder = new LocalBinder();
 		this.backEnd = BackEnd.getInstance();
+		this.liveScores = new HashMap<Integer, Score>(10);
+		this.api = new CricScoreAPI();
 		readPreferences();
 	}
 
@@ -55,7 +62,6 @@ public class CricScoreService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "onStartCommand");
 		updateMatchList();
-		background();
 		return Service.START_STICKY;
 	}
 
@@ -66,6 +72,7 @@ public class CricScoreService extends Service {
 				Log.d(TAG, "updating match list");
 				Response response = backEnd.fetchData(Request.NULL);
 				listMatches = Score.getScores(response.getJson());
+				sendBroadcast(new Intent(MainActivity.UPDATE_MATCHES));
 				Log.d(TAG, "updated match list");
 			}
 		}).start();
@@ -74,48 +81,67 @@ public class CricScoreService extends Service {
 	private void background() {
 		Log.d(TAG, "running background()");
 		this.timer.cancel();
-		this.timer = new Timer(true);
-		TimerTask task = new TimerTask() {
-			@Override
-			public void run() {
-				updateScores();
-			}
-		};
-		this.timer.scheduleAtFixedRate(task, 0, this.updateInterval);
+		if (this.liveScores.size() != 0) {
+			this.timer = new Timer(true);
+			TimerTask task = new TimerTask() {
+				@Override
+				public void run() {
+					updateScores();
+				}
+			};
+			this.timer.scheduleAtFixedRate(task, 0, this.updateInterval);
+		}
 	}
 
 	private void updateScores() {
-		if (this.matches != null && this.matches.size() != 0) {
-			Log.d(TAG, "Running background scores - started");
-			Request request = new Request(this.matches, this.lastModified);
-			Response response = backEnd.fetchData(request);
-			this.scoresChanged = Score.getScores(response.getJson());
-			this.lastModified = response.getLastModified();
-			Log.d(TAG, "Running background scores - ended");
+		Log.d(TAG, "Running background scores - started");
+		List<Integer> matchIds = new ArrayList<Integer>(
+				this.liveScores.keySet());
+		Request request = new Request(matchIds, this.lastModified);
+		Response response = backEnd.fetchData(request);
+		List<Score> scoresChanged = Score.getScores(response.getJson());
+
+		for (Score score : scoresChanged) {
+			liveScores.put(score.getId(), score);
 		}
+		
+		if (response.getLastModified() != null) {
+			this.lastModified = response.getLastModified();
+		}
+		
+		Log.d(TAG, "Running background scores - ended");
 	}
 
 	public class LocalBinder extends Binder {
 		CricScoreAPI getService() {
-			return new CricScoreAPI();
+			return api;
 		}
 	}
 
 	public class CricScoreAPI {
+
 		public List<Score> listMatches() {
-			return CricScoreService.this.listMatches;
+			return listMatches;
 		}
 
-		public List<Score> getScoresChanged() {
-			Log.d(TAG, "getScores(): " + scoresChanged);
-			return scoresChanged;
+		public List<Score> getLiveScores() {
+			Log.d(TAG, "getLiveScores(): " + liveScores);
+			return new ArrayList<Score>(liveScores.values());
 		}
 
-		public void setMatches(List<Integer> newMatches) {
-			Log.d(TAG, "setMatches(): " + matches);
-			matches = newMatches;
-			lastModified = null;
-			background();
+		public void addMatch(Integer id) {
+			if (!liveScores.containsKey(id)) {
+				liveScores.put(id, null);
+				background();
+				lastModified = null;
+			}
+		}
+
+		public void removeMatch(Integer id) {
+			if (liveScores.containsKey(id)) {
+				liveScores.remove(id);
+				background();
+			}
 		}
 	}
 }

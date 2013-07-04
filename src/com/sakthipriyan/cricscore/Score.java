@@ -30,11 +30,11 @@ public class Score {
 		this.simple = simple;
 		this.detail = detail;
 	}
-	
-	public void updateScore(Score score){
-		if(this.id == score.id){
+
+	public void updateScore(Score score) {
+		if (this.id == score.id) {
 			this.simple = score.simple;
-			this.detail = score.detail;	
+			this.detail = score.detail;
 		}
 	}
 
@@ -57,7 +57,7 @@ public class Score {
 	public String getSimple() {
 		return simple;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Score [id=" + id + ", team1=" + team1 + ", team2=" + team2
@@ -65,11 +65,12 @@ public class Score {
 	}
 
 	public static List<Score> getScores(String json) {
-		if(null == json){
-			return null;
-		}
 		List<Score> scores = new ArrayList<Score>();
-		
+
+		if (null == json) {
+			return scores;
+		}
+
 		try {
 			JSONArray jArray = new JSONArray(json);
 			for (int i = 0; i < jArray.length(); i++) {
@@ -86,8 +87,7 @@ public class Score {
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
-			Log.e(Score.class.toString(),
-					"Failed to parse the JSON response");
+			Log.e(Score.class.toString(), "Failed to parse the JSON response");
 		}
 		return scores;
 	}

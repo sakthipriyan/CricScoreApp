@@ -1,12 +1,29 @@
 package com.sakthipriyan.cricscore;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -17,17 +34,29 @@ import com.sakthipriyan.cricscore.CricScoreService.LocalBinder;
 
 public class MainActivity extends SherlockActivity {
 
-	private static final String TAG = MainActivity.class.toString(); 
+	public static final String UPDATE_MATCHES = "com.mychoize.android.cricscore.UPDATE_MATCHES";
+	private static final String TAG = MainActivity.class.getSimpleName();
+	
 	// For local reference
 	private Context cxt;
 	private CricScoreAPI cricScoreAPI;
 	private boolean bound = false;
+	private CricScoreReceiver receiver;
+	private IntentFilter filter;
+	private List<Score> matches;
+	private MatchAdapter matchAdapter;
+	private Set<Integer> liveMatches;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		cxt = this;
+		this.receiver = new CricScoreReceiver();
+		this.filter = new IntentFilter(UPDATE_MATCHES);
+		this.matches = new ArrayList<Score>();
+		this.liveMatches = new HashSet<Integer>();
+		this.matchAdapter = new MatchAdapter(cxt);
 		Log.d(TAG, "onCreate");
 	}
 
@@ -38,14 +67,24 @@ public class MainActivity extends SherlockActivity {
 		Intent intent = new Intent(cxt, CricScoreService.class);
 		bindService(intent, connection, Context.BIND_AUTO_CREATE);
 		Log.d(TAG, "onStart");
-		if(bound){
-			Log.d(TAG, "cricScoreService.getScores():" + cricScoreAPI.getScoresChanged());
-		}
+	}
+	
+	
+
+	@Override
+	protected void onResume() {
+		registerReceiver(receiver, filter);
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause() {
+		unregisterReceiver(receiver);
+		super.onPause();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		Log.d(TAG, "onCreateOptionsMenu");
 		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.main, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -85,12 +124,9 @@ public class MainActivity extends SherlockActivity {
 	 * Toast.LENGTH_SHORT).show(); } }
 	 */
 
-	/** Defines callbacks for service binding, passed to bindService() */
 	private ServiceConnection connection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			// We've bound to LocalService, cast the IBinder and get
-			// LocalService instance
 			LocalBinder binder = (LocalBinder) service;
 			cricScoreAPI = binder.getService();
 			bound = true;
@@ -103,5 +139,88 @@ public class MainActivity extends SherlockActivity {
 			Log.d(TAG, "disconnecting from service");
 		}
 	};
+	
+	private void addMatch(int id){
+		Toast.makeText(cxt, id + "", Toast.LENGTH_LONG).show();
+		cricScoreAPI.addMatch(id);
+	}
+	
+	private void showAllMatches(){
+		this.matches = cricScoreAPI.listMatches();
+				
+		final ListView list = (ListView) findViewById(R.id.matchList);
+		list.setAdapter(matchAdapter);
+		list.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View view,
+					int position, long id) {
+				Integer matchId = ((Score)list.getItemAtPosition(position)).getId();
+				addMatch(matchId);
+			}
+		});
+		final LinearLayout progress =  (LinearLayout) findViewById(R.id.loadingInProgress);
+		progress.setVisibility(View.GONE);
+		final LinearLayout content =  (LinearLayout) findViewById(R.id.content);
+		content.setVisibility(View.VISIBLE);
+	}
+	
+	private class CricScoreReceiver extends BroadcastReceiver {		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			long start = System.currentTimeMillis();
+			if(UPDATE_MATCHES.equals(intent.getAction())){
+				showAllMatches();
+			}
+			long time = System.currentTimeMillis() - start;
+			Log.i(TAG, "On Receive Time Taken : " + time + " ms");
+		}
+	}
+	
+	private class MatchAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
 
+		public MatchAdapter(Context context) {
+			mInflater = LayoutInflater.from(context);
+
+		}
+
+		public int getCount() {
+			return matches.size();
+		}
+
+		public Object getItem(int position) {
+			return matches.get(position);
+		}
+
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder;
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.matchview, null);
+				holder = new ViewHolder();
+				holder.text = (TextView) convertView.findViewById(R.id.TeamOne);
+				holder.text2 = (TextView) convertView
+						.findViewById(R.id.TeamTwo);
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+			try {
+				Score score = matches.get(position);
+				holder.text.setText(score.getTeam1());
+				holder.text2.setText(score.getTeam2());
+			} catch (ArrayIndexOutOfBoundsException e) {
+
+			}
+
+			return convertView;
+		}
+
+		class ViewHolder {
+			TextView text;
+			TextView text2;
+		}
+	}
 }

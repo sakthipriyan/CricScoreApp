@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    
-	<PreferenceCategory android:title="@string/info_notify">
-		<CheckBoxPreference android:title="@string/info_notify_enable"
-			android:defaultValue="true" android:summary="@string/info_notify_desc"
-			android:key="checkboxNotify" />
-	</PreferenceCategory>
-	
-	<PreferenceCategory android:title="@string/info_internet">
-		<ListPreference android:title="@string/info_refresh_interval"
-			android:summary="@string/info_refresh_desc"
-			android:key="refreshTime" android:defaultValue="20000"
-			android:entries="@array/update_freq" android:entryValues="@array/update_freq_time" />
-	</PreferenceCategory>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-	<PreferenceCategory android:title="@string/info_about">
-		<Preference android:title="@string/info_version" android:summary="@string/info_version_no"
-			android:key="app_version" android:selectable="false" />
-		<Preference android:title="@string/info_release" android:summary="@string/info_release_date"
-			android:key="app_date" android:selectable="false" /> 
-	</PreferenceCategory>
+    <PreferenceCategory android:title="@string/info_settings" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="checkboxHide"
+            android:summary="@string/info_hide_desc"
+            android:title="@string/info_hide_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="checkboxNotify"
+            android:summary="@string/info_notify_desc"
+            android:title="@string/info_notify_enable" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/info_internet" >
+        <ListPreference
+            android:defaultValue="20000"
+            android:entries="@array/update_freq"
+            android:entryValues="@array/update_freq_time"
+            android:key="refreshTime"
+            android:summary="@string/info_refresh_desc"
+            android:title="@string/info_refresh_interval" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/info_about" >
+        <Preference
+            android:key="app_version"
+            android:selectable="false"
+            android:summary="@string/info_version_no"
+            android:title="@string/info_version" />
+        <Preference
+            android:key="app_date"
+            android:selectable="false"
+            android:summary="@string/info_release_date"
+            android:title="@string/info_release" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

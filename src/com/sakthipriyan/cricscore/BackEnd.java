@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +23,7 @@ import android.util.Log;
 
 public class BackEnd {
 
-	private static final String TAG = BackEnd.class.toString();
+	private static final String TAG = BackEnd.class.getSimpleName();
 	private static final String BASE_URL = "http://cricscore-api.appspot.com/csa";
 
 	private static BackEnd instance;
@@ -85,13 +87,23 @@ public class BackEnd {
 					builder.append(line);
 				}
 
+				String lastModifiedStr = httpResponse
+						.getFirstHeader("Last-Modified").getValue();
 				Date lastModified = null;
+				
 				try {
-					lastModified = DateUtils.parseDate(httpResponse
-							.getFirstHeader("Last-Modified").getValue());
+					//SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+					//Log.i(TAG,"formatted: " + format.format(new Date()));
+					//lastModified = format.parse(lastModifiedStr);
+					
+					lastModified = DateUtils.parseDate(lastModifiedStr);
 				} catch (DateParseException e) {
 					Log.e(BackEnd.class.toString(),
-							"Invalid date in Last-Modified header");
+							"Invalid date in Last-Modified header: "  + lastModifiedStr);
+				//} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					//Log.e(BackEnd.class.toString(),
+						//	"Invalid date in Last-Modified header: "  + lastModifiedStr);
 				}
 				response = new Response(builder.toString(), lastModified);
 			} else if (statusCode == 304) {
