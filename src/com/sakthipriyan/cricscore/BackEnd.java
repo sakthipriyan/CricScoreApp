@@ -107,9 +107,9 @@ public class BackEnd {
 				}
 				response = new Response(builder.toString(), lastModified);
 			} else if (statusCode == 304) {
-				Log.i(BackEnd.class.toString(), "No update");
+				Log.i(TAG, "No update");
 			} else {
-				Log.e(BackEnd.class.toString(), "Failed to download json");
+				Log.e(TAG, "Failed to download json");
 			}
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
