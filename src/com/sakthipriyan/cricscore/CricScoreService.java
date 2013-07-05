@@ -20,7 +20,7 @@ import android.util.Log;
 @SuppressLint("UseSparseArrays")
 public class CricScoreService extends Service {
 
-	private static final String TAG = CricScoreService.class.toString();
+	private static final String TAG = CricScoreService.class.getSimpleName();
 	private Date lastModified;
 	private Map<Integer, Score> liveScores;
 	private List<Score> listMatches;
@@ -47,7 +47,7 @@ public class CricScoreService extends Service {
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
 		this.checkboxNotify = prefs.getBoolean("checkboxNotify", true);
-		this.updateInterval = prefs.getInt("refreshTime", 20000);
+		this.updateInterval = Integer.parseInt(prefs.getString("refreshTime", "20000"));
 		Log.d(TAG, "Read Preferences. checkboxNotify:" + checkboxNotify
 				+ " updateInterval:" + updateInterval);
 	}
@@ -94,6 +94,7 @@ public class CricScoreService extends Service {
 	}
 
 	private void updateScores() {
+		sendBroadcast(new Intent(MainActivity.UPDATE_STARTED));
 		Log.d(TAG, "Running background scores - started");
 		List<Integer> matchIds = new ArrayList<Integer>(
 				this.liveScores.keySet());
@@ -110,6 +111,7 @@ public class CricScoreService extends Service {
 		}
 		
 		Log.d(TAG, "Running background scores - ended");
+		sendBroadcast(new Intent(MainActivity.UPDATE_COMPLETED));
 	}
 
 	public class LocalBinder extends Binder {

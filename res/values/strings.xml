@@ -3,8 +3,8 @@
 
     <string name="app_name">Cricscore</string>
     <string name="settings">Settings</string>
+    <string name="refresh">Refresh</string>
     <string name="hello_world">Hello world!</string>
-
     <string name="info_version">Version</string>
     <string name="info_version_no">1.0</string>
     <string name="info_release">Released on</string>
@@ -16,14 +16,10 @@
     <string name="info_internet">Internet</string>
     <string name="info_refresh_interval">Refresh Interval</string>
     <string name="info_refresh_desc">for auto updating scores</string>
-    
     <string name="info_hide_title">Hide App</string>
     <string name="info_hide_desc">when back key is pressed</string>
-    
-    
     <string name="vs">vs</string>
-    
-        
+
     <string-array name="update_freq">
         <item>10 seconds</item>
         <item>20 seconds</item>
@@ -32,11 +28,19 @@
         <item>2 minutes</item>
         <item>5 minutes</item>
     </string-array>
-    
-    	<color name="black">#000000</color>
+    <string-array name="update_freq_time">
+        <item>10000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>60000</item>
+        <item>120000</item>
+        <item>300000</item>
+    </string-array>
+
+    <color name="black">#000000</color>
     <color name="gray">#888888</color>
     <color name="white">#ffffff</color>
-    
+
     <dimen name="big_text">20px</dimen>
     <dimen name="normal_text">16px</dimen>
     <dimen name="medium_text">14px</dimen>
@@ -47,5 +51,5 @@
     <dimen name="big_padding">10dp</dimen>
     <dimen name="hr_dimen">1dp</dimen>
     <dimen name="hr_dimen3">3dp</dimen>
-    
+
 </resources>

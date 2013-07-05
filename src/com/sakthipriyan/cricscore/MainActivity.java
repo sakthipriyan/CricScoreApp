@@ -29,12 +29,15 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.sakthipriyan.cricscore.CricScoreService.CricScoreAPI;
 import com.sakthipriyan.cricscore.CricScoreService.LocalBinder;
 
 public class MainActivity extends SherlockActivity {
 
-	public static final String UPDATE_MATCHES = "com.mychoize.android.cricscore.UPDATE_MATCHES";
+	public static final String UPDATE_MATCHES = "com.sakthipriyan.cricscore.UPDATE_MATCHES";
+	public static final String UPDATE_STARTED = "com.sakthipriyan.cricscore.UPDATE_STARTED";
+	public static final String UPDATE_COMPLETED = "com.sakthipriyan.cricscore.UPDATE_COMPLETED";
 	private static final String TAG = MainActivity.class.getSimpleName();
 	
 	// For local reference
@@ -44,19 +47,25 @@ public class MainActivity extends SherlockActivity {
 	private CricScoreReceiver receiver;
 	private IntentFilter filter;
 	private List<Score> matches;
+	private List<Score> liveScores;
 	private MatchAdapter matchAdapter;
 	private Set<Integer> liveMatches;
+	private Menu menu;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
 		cxt = this;
 		this.receiver = new CricScoreReceiver();
 		this.filter = new IntentFilter(UPDATE_MATCHES);
+		this.filter.addAction(UPDATE_STARTED);
+		this.filter.addAction(UPDATE_COMPLETED);
 		this.matches = new ArrayList<Score>();
 		this.liveMatches = new HashSet<Integer>();
 		this.matchAdapter = new MatchAdapter(cxt);
+		//getSherlock().setProgressBarIndeterminateVisibility(true);
 		Log.d(TAG, "onCreate");
 	}
 
@@ -69,8 +78,6 @@ public class MainActivity extends SherlockActivity {
 		Log.d(TAG, "onStart");
 	}
 	
-	
-
 	@Override
 	protected void onResume() {
 		registerReceiver(receiver, filter);
@@ -87,6 +94,7 @@ public class MainActivity extends SherlockActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.main, menu);
+		this.menu = menu;
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -95,6 +103,9 @@ public class MainActivity extends SherlockActivity {
 		switch (item.getItemId()) {
 		case R.id.settings:
 			startActivity(new Intent(cxt, Settings.class));
+			return true;
+		case R.id.refresh:
+			Toast.makeText(cxt, "Refreshing..",	 Toast.LENGTH_SHORT).show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -147,7 +158,6 @@ public class MainActivity extends SherlockActivity {
 	
 	private void showAllMatches(){
 		this.matches = cricScoreAPI.listMatches();
-				
 		final ListView list = (ListView) findViewById(R.id.matchList);
 		list.setAdapter(matchAdapter);
 		list.setOnItemClickListener(new OnItemClickListener() {
@@ -161,6 +171,7 @@ public class MainActivity extends SherlockActivity {
 		progress.setVisibility(View.GONE);
 		final LinearLayout content =  (LinearLayout) findViewById(R.id.content);
 		content.setVisibility(View.VISIBLE);
+		getSherlock().setProgressBarIndeterminateVisibility(false);
 	}
 	
 	private class CricScoreReceiver extends BroadcastReceiver {		
@@ -169,10 +180,16 @@ public class MainActivity extends SherlockActivity {
 			long start = System.currentTimeMillis();
 			if(UPDATE_MATCHES.equals(intent.getAction())){
 				showAllMatches();
+			} else if(UPDATE_STARTED.equals(intent.getAction())){
+				menu.findItem(R.id.refresh).setVisible(false);
+				getSherlock().setProgressBarIndeterminateVisibility(true);
+			} else if(UPDATE_COMPLETED.equals(intent.getAction())){
+				getSherlock().setProgressBarIndeterminateVisibility(false);
+				menu.findItem(R.id.refresh).setVisible(true);
 			}
 			long time = System.currentTimeMillis() - start;
 			Log.i(TAG, "On Receive Time Taken : " + time + " ms");
-		}
+		} 
 	}
 	
 	private class MatchAdapter extends BaseAdapter {
