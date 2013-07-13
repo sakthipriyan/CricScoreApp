@@ -39,10 +39,20 @@
 
     <color name="black">#000000</color>
     <color name="gray">#888888</color>
+    <color name="light_white">#f0f0f0</color>
     <color name="white">#ffffff</color>
     <color name="red">#ff8888</color>
-    <color name="light_red">#ffcccc</color>
     <color name="green">#88ff88</color>
+    <color name="light_blue">#33B5E5</color>
+    <color name="dark_blue">#0099CC</color>
+    <color name="light_violet">#AA66CC</color>
+    <color name="dark_violet">#9933CC</color>
+    <color name="light_green">#99CC00</color>
+    <color name="dark_green">#669900</color>
+    <color name="light_yellow">#FFBB33</color>
+    <color name="dark_yellow">#FF8800</color>
+    <color name="light_red">#FF4444</color>
+    <color name="dark_red">#CC0000</color>
 
     <dimen name="big_text">20px</dimen>
     <dimen name="normal_text">16px</dimen>

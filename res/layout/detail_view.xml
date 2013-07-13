@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/gray"
+    android:gravity="top"
+    android:orientation="vertical"
+    android:padding="@dimen/medium_padding"
+    android:scrollbars="vertical">
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="top"
+        android:stretchColumns="1" >
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/team11"
+                android:layout_column="1"
+                android:padding="@dimen/medium_padding"
+                android:text="Team 1"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/dark_blue" />
+
+            <TextView
+                android:id="@+id/team1s1"
+                android:padding="@dimen/medium_padding"
+                android:text="Score 1"
+                android:textAppearance="@android:style/TextAppearance.Small" 
+                android:textColor="@color/dark_blue"/>
+
+            <TextView
+                android:id="@+id/team1s2"
+                android:padding="@dimen/medium_padding"
+                android:text="Score 2"
+                android:textAppearance="@android:style/TextAppearance.Small" 
+                android:textColor="@color/dark_blue"/>
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/team21"
+                android:layout_column="1"
+                android:padding="@dimen/medium_padding"
+                android:text="Team 2"
+                android:textAppearance="@android:style/TextAppearance.Small" 
+                android:textColor="@color/dark_blue" />
+
+            <TextView
+                android:id="@+id/team2s1"
+                android:padding="@dimen/medium_padding"
+                android:text="Score 1"
+                android:textAppearance="@android:style/TextAppearance.Small" 
+                android:textColor="@color/dark_blue" />
+
+            <TextView
+                android:id="@+id/team2s2"
+                android:padding="@dimen/medium_padding"
+                android:text="Score 2"
+                android:textAppearance="@android:style/TextAppearance.Small" 
+                android:textColor="@color/dark_blue" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:id="@+id/clickWebLink"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_blue"
+        android:gravity="top"
+        android:stretchColumns="1" >
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/teamshort"
+                android:layout_column="1"
+                android:padding="@dimen/medium_padding"
+                android:text="India"
+                android:textAppearance="@android:style/TextAppearance.Large.Inverse" />
+
+            <TextView
+                android:id="@+id/teamruns"
+                android:padding="@dimen/medium_padding"
+                android:text="123/2"
+                android:textAppearance="@android:style/TextAppearance.Medium.Inverse" />
+
+            <TextView
+                android:id="@+id/teamovers"
+                android:padding="@dimen/medium_padding"
+                android:text="34.2"
+                android:textAppearance="@android:style/TextAppearance.Medium.Inverse" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="top"
+        android:stretchColumns="1" >
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/bat1"
+                android:layout_column="1"
+                android:padding="@dimen/medium_padding"
+                android:text="Batsmen 1"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/dark_blue"/>
+
+            <TextView
+                android:id="@+id/bat1Score"
+                android:padding="@dimen/medium_padding"
+                android:text="223"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/dark_blue" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/bat2"
+                android:layout_column="1"
+                android:padding="@dimen/medium_padding"
+                android:text="Batsmen 1"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/dark_blue" />
+
+            <TextView
+                android:id="@+id/bat2Score"
+                android:padding="@dimen/medium_padding"
+                android:text="22"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/dark_blue"/>
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/blower"
+                android:layout_column="1"
+                android:padding="@dimen/medium_padding"
+                android:text="Some Bolwer"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/dark_blue" />
+
+            <TextView
+                android:id="@+id/blowerEco"
+                android:padding="@dimen/medium_padding"
+                android:text="34/2"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/dark_blue"
+                 />
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/match_status"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_white"
+        android:gravity="center"
+        android:padding="@dimen/small_padding"
+        android:text="Lunch"
+        android:textColor="@color/light_violet"
+        android:textAppearance="@android:style/TextAppearance.Small" />
+
+</TableLayout>
