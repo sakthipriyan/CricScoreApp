@@ -35,8 +35,8 @@ public class DetailedScore {
 
 	public DetailedScore(Score score) {
 		this.matchId = score.getId();
-		processSimple(score.getSimple());
-		processDetail(score.getDetail());
+		this.processSimple(score.getSimple());
+		this.processDetail(score.getDetail());
 	}
 
 	private void processSimple(final String simple) {
@@ -135,7 +135,7 @@ public class DetailedScore {
 	}
 
 	private void setCurrentInfo(List<String> listArray) {
-		int size = listArray.size();
+		int size = listArray.size();			
 		if (size == 6) {
 			this.batsman1 = listArray.get(0);
 			this.batsman1score = listArray.get(1);
