@@ -226,7 +226,6 @@ public class MainActivity extends SherlockActivity {
 	private class CricScoreReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			long start = System.currentTimeMillis();
 			if (UPDATE_MATCHES.equals(intent.getAction())) {
 				showAllMatches();
 			} else if (UPDATE_STARTED.equals(intent.getAction())) {
@@ -234,8 +233,6 @@ public class MainActivity extends SherlockActivity {
 			} else if (UPDATE_COMPLETED.equals(intent.getAction())) {
 				refreshEnd();
 			}
-			long time = System.currentTimeMillis() - start;
-			Log.i(TAG, "On Receive Time Taken : " + time + " ms");
 		}
 	}
 

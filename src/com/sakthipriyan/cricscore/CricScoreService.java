@@ -21,7 +21,7 @@ public class CricScoreService extends Service {
 
 	private static final String TAG = CricScoreService.class.getSimpleName();
 	private String lastModified;
-	private Map<Integer, Score> liveScores;
+	private Map<Integer, DetailedScore> liveScores;
 	private List<Score> listMatches;
 	private Timer timer;
 	private boolean checkboxNotify;
@@ -37,7 +37,7 @@ public class CricScoreService extends Service {
 		this.timer = new Timer("scoreUpdateTimer");
 		this.binder = new LocalBinder();
 		this.backEnd = BackEnd.getInstance();
-		this.liveScores = new HashMap<Integer, Score>(10);
+		this.liveScores = new HashMap<Integer, DetailedScore>(10);
 		this.api = new CricScoreAPI();
 		readPreferences();
 	}
@@ -102,7 +102,7 @@ public class CricScoreService extends Service {
 		List<Score> scoresChanged = Score.getScores(response.getJson());
 
 		for (Score score : scoresChanged) {
-			liveScores.put(score.getId(), score);
+			liveScores.put(score.getId(), new DetailedScore(score));
 		}
 		
 		if (response.getLastModified() != null) {
@@ -125,9 +125,9 @@ public class CricScoreService extends Service {
 			return listMatches;
 		}
 
-		public List<Score> getLiveScores() {
+		public List<DetailedScore> getLiveScores() {
 			Log.d(TAG, "getLiveScores(): " + liveScores);
-			return new ArrayList<Score>(liveScores.values());
+			return new ArrayList<DetailedScore>(liveScores.values());
 		}
 
 		public void addMatch(Integer id) {
