@@ -1,7 +1,6 @@
 package com.sakthipriyan.cricscore;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,7 @@ import android.util.Log;
 public class CricScoreService extends Service {
 
 	private static final String TAG = CricScoreService.class.getSimpleName();
-	private Date lastModified;
+	private String lastModified;
 	private Map<Integer, Score> liveScores;
 	private List<Score> listMatches;
 	private Timer timer;
@@ -134,16 +133,19 @@ public class CricScoreService extends Service {
 		public void addMatch(Integer id) {
 			if (!liveScores.containsKey(id)) {
 				liveScores.put(id, null);
-				background();
 				lastModified = null;
+				background();
 			}
 		}
 
 		public void removeMatch(Integer id) {
 			if (liveScores.containsKey(id)) {
 				liveScores.remove(id);
-				background();
 			}
+		}
+		
+		public void refresh(){
+			background();
 		}
 	}
 }

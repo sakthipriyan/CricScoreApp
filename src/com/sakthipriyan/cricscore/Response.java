@@ -1,14 +1,12 @@
 package com.sakthipriyan.cricscore;
 
-import java.util.Date;
-
 public class Response {
-	public static final Response NULL = new Response(null,null);
-	
-	private String json;
-	private Date lastModified;
+	public static final Response NULL = new Response(null, null);
 
-	public Response(String json, Date lastModified) {
+	private String json;
+	private String lastModified;
+
+	public Response(String json, String lastModified) {
 		super();
 		this.json = json;
 		this.lastModified = lastModified;
@@ -18,13 +16,13 @@ public class Response {
 		return json;
 	}
 
-	public Date getLastModified() {
+	public String getLastModified() {
 		return lastModified;
 	}
 
 	@Override
 	public String toString() {
-		return "Response [json=" + json + ", lastModified="
-				+ lastModified + "]";
+		return "Response [json=" + json + ", lastModified=" + lastModified
+				+ "]";
 	}
 }

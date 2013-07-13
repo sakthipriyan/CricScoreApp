@@ -1,6 +1,5 @@
 package com.sakthipriyan.cricscore;
 
-import java.util.Date;
 import java.util.List;
 
 public class Request {
@@ -8,9 +7,9 @@ public class Request {
 	public static final Request NULL = new Request(null,null);	
 	
 	private List<Integer> matchIds;
-	private Date lastModified;
+	private String lastModified;
 
-	public Request(List<Integer> matchIds, Date lastModified) {
+	public Request(List<Integer> matchIds, String lastModified) {
 		super();
 		this.matchIds = matchIds;
 		this.lastModified = lastModified;
@@ -20,7 +19,7 @@ public class Request {
 		return matchIds;
 	}
 
-	public Date getLastModified() {
+	public String getLastModified() {
 		return lastModified;
 	}
 
@@ -29,5 +28,5 @@ public class Request {
 		return "Request [matchIds=" + matchIds + ", lastModified="
 				+ lastModified + "]";
 	}
-	
+
 }

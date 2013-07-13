@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -15,8 +12,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.cookie.DateParseException;
-import org.apache.http.impl.cookie.DateUtils;
 import org.apache.http.params.BasicHttpParams;
 
 import android.util.Log;
@@ -65,8 +60,7 @@ public class BackEnd {
 
 		HttpGet httpGet = new HttpGet(getURL(request.getMatchIds()));
 		if (request.getLastModified() != null) {
-			httpGet.setHeader("If-Modified-Since",
-					DateUtils.formatDate(request.getLastModified()));
+			httpGet.setHeader("If-Modified-Since", request.getLastModified());
 		}
 
 		InputStream content = null;
@@ -87,25 +81,9 @@ public class BackEnd {
 					builder.append(line);
 				}
 
-				String lastModifiedStr = httpResponse
-						.getFirstHeader("Last-Modified").getValue();
-				Date lastModified = null;
-				
-				try {
-					//SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
-					//Log.i(TAG,"formatted: " + format.format(new Date()));
-					//lastModified = format.parse(lastModifiedStr);
-					
-					lastModified = DateUtils.parseDate(lastModifiedStr);
-				} catch (DateParseException e) {
-					Log.e(BackEnd.class.toString(),
-							"Invalid date in Last-Modified header: "  + lastModifiedStr);
-				//} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					//Log.e(BackEnd.class.toString(),
-						//	"Invalid date in Last-Modified header: "  + lastModifiedStr);
-				}
-				response = new Response(builder.toString(), lastModified);
+				String lastModifiedStr = httpResponse.getFirstHeader(
+						"Last-Modified").getValue();
+				response = new Response(builder.toString(), lastModifiedStr);
 			} else if (statusCode == 304) {
 				Log.i(TAG, "No update");
 			} else {
