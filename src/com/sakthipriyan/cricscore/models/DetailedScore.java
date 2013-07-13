@@ -1,7 +1,8 @@
-package com.sakthipriyan.cricscore;
+package com.sakthipriyan.cricscore.models;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class DetailedScore {
 

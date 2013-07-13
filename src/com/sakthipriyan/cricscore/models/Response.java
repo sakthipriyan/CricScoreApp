@@ -1,4 +1,4 @@
-package com.sakthipriyan.cricscore;
+package com.sakthipriyan.cricscore.models;
 
 public class Response {
 	public static final Response NULL = new Response(null, null);

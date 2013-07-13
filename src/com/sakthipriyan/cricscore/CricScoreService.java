@@ -7,6 +7,11 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.sakthipriyan.cricscore.models.DetailedScore;
+import com.sakthipriyan.cricscore.models.Request;
+import com.sakthipriyan.cricscore.models.Response;
+import com.sakthipriyan.cricscore.models.Score;
+
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;

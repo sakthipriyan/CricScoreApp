@@ -14,6 +14,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 
+import com.sakthipriyan.cricscore.models.Request;
+import com.sakthipriyan.cricscore.models.Response;
+
 import android.util.Log;
 
 public class BackEnd {

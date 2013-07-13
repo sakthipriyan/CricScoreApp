@@ -33,6 +33,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.sakthipriyan.cricscore.CricScoreService.CricScoreAPI;
 import com.sakthipriyan.cricscore.CricScoreService.LocalBinder;
+import com.sakthipriyan.cricscore.models.Score;
 
 public class MainActivity extends SherlockActivity {
 
