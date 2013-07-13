@@ -4,7 +4,9 @@
         android:id="@+id/refresh"
         android:icon="@drawable/navigation_refresh"
         android:showAsAction="always"
-        android:title="@string/refresh"/>
+        android:title="@string/refresh"
+        android:actionLayout="@layout/refresh_view"
+        />
     <item
         android:id="@+id/settings"
         android:icon="@drawable/action_settings"
