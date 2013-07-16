@@ -51,7 +51,8 @@ public class CricScoreService extends Service {
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
 		this.checkboxNotify = prefs.getBoolean("checkboxNotify", true);
-		this.updateInterval = Integer.parseInt(prefs.getString("refreshTime", "20000"));
+		this.updateInterval = Integer.parseInt(prefs.getString("refreshTime",
+				"20000"));
 		Log.d(TAG, "Read Preferences. checkboxNotify:" + checkboxNotify
 				+ " updateInterval:" + updateInterval);
 	}
@@ -106,16 +107,17 @@ public class CricScoreService extends Service {
 		Response response = backEnd.fetchData(request);
 		List<Score> scoresChanged = Score.getScores(response.getJson());
 
-		for (Score score : scoresChanged) {
-			liveScores.put(score.getId(), new DetailedScore(score));
-		}
-		
-		if (response.getLastModified() != null) {
+		if (scoresChanged.size() == 0) {
+			sendBroadcast(new Intent(MainActivity.UPDATE_NONE));
+		} else {
+			for (Score score : scoresChanged) {
+				liveScores.put(score.getId(), new DetailedScore(score));
+			}
 			this.lastModified = response.getLastModified();
+			sendBroadcast(new Intent(MainActivity.UPDATE_COMPLETED));
 		}
-		
+
 		Log.d(TAG, "Running background scores - ended");
-		sendBroadcast(new Intent(MainActivity.UPDATE_COMPLETED));
 	}
 
 	public class LocalBinder extends Binder {
@@ -126,12 +128,16 @@ public class CricScoreService extends Service {
 
 	public class CricScoreAPI {
 
-		public List<Score> listMatches() {
-			return listMatches;
+		public List<DetailedScore> listMatches() {
+			List<DetailedScore> detailedScores = new ArrayList<DetailedScore>();
+			for (Score score : listMatches) {
+				detailedScores.add(new DetailedScore(score));
+			}
+			return detailedScores;
 		}
 
 		public List<DetailedScore> getLiveScores() {
-			Log.d(TAG, "getLiveScores(): " + liveScores);
+			//Log.d(TAG, "getLiveScores(): " + liveScores);
 			return new ArrayList<DetailedScore>(liveScores.values());
 		}
 
@@ -148,8 +154,8 @@ public class CricScoreService extends Service {
 				liveScores.remove(id);
 			}
 		}
-		
-		public void refresh(){
+
+		public void refresh() {
 			background();
 		}
 	}

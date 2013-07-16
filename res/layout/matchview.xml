@@ -12,6 +12,7 @@
         android:layout_alignLeft="@id/listItem"
         android:gravity="left"
         android:textAppearance="@android:style/TextAppearance.Medium"
+        android:textColor="@color/dark_violet"
         android:textIsSelectable="false" />
 
     <TextView
@@ -24,6 +25,7 @@
         android:paddingLeft="@dimen/medium_padding"
         android:text="@string/vs"
         android:textAppearance="@android:style/TextAppearance.Small"
+        android:textColor="@color/gray"
         android:textIsSelectable="false" />
 
     <TextView
@@ -32,5 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/vs"
         android:textAppearance="@android:style/TextAppearance.Medium"
+        android:textColor="@color/dark_violet"
         android:textIsSelectable="false" />
+
 </RelativeLayout>

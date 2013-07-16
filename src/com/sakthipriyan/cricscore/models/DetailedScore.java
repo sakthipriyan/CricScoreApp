@@ -6,7 +6,7 @@ import java.util.List;
 
 public class DetailedScore {
 
-	private static String EMPTY = "";
+	public static String EMPTY = "";
 
 	private int matchId;
 	private String team1;
@@ -33,9 +33,16 @@ public class DetailedScore {
 	private String place;
 	private String matchInfo;
 	private String matchDate;
+	
+	private Status status;
 
 	public DetailedScore(Score score) {
 		this.matchId = score.getId();
+		if(score.getTeam1() != null){
+			this.team1 = score.getTeam1();
+			this.team2 = score.getTeam2();
+			this.status = Status.MATCH;
+		}
 		this.processSimple(score.getSimple());
 		this.processDetail(score.getDetail());
 	}
@@ -79,6 +86,7 @@ public class DetailedScore {
 		int openBracket = detail.indexOf("(");
 		int closeBracket = detail.indexOf(")");
 		if (openBracket > 0 && closeBracket > 0) {
+			this.status = Status.LIVE;
 			List<String> scoreList = new ArrayList<String>();
 			String innerTxt = detail.substring(openBracket + 1, closeBracket);
 			String innerArray[] = innerTxt.split(",");
@@ -128,6 +136,7 @@ public class DetailedScore {
 			if (commaIndex != -1) {
 				this.place = val.substring(0, commaIndex);
 				this.matchDate = val.substring(commaIndex + 2, val.length());
+				this.status = Status.FUTURE;
 			}
 			if (colenIndex != -1) {
 				this.matchInfo = detail.substring(0, colenIndex);
@@ -238,6 +247,22 @@ public class DetailedScore {
 	public String getMatchDate() {
 		return getString(matchDate);
 	}
+	
+	public Status getStatus(){
+		return this.status;
+	}
+	
+	public void setStatus(Status status){
+		this.status = status;
+	}
+	
+	//public boolean
+	
+	public enum Status{
+		MATCH,
+		LIVE,
+		FUTURE
+	}
 
 	@Override
 	public String toString() {
@@ -252,6 +277,20 @@ public class DetailedScore {
 				+ ", bowlerEco=" + bowlerEco + ", matchStatus=" + matchStatus
 				+ ", place=" + place + ", matchInfo=" + matchInfo
 				+ ", matchDate=" + matchDate + "]";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof DetailedScore)){
+			return false;
+		}
+		DetailedScore other = (DetailedScore) o;
+		return other.matchId ==  this.matchId;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.matchId;
 	}
 
 	/*

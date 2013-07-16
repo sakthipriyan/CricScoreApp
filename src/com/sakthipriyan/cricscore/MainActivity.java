@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -33,13 +34,15 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.sakthipriyan.cricscore.CricScoreService.CricScoreAPI;
 import com.sakthipriyan.cricscore.CricScoreService.LocalBinder;
-import com.sakthipriyan.cricscore.models.Score;
+import com.sakthipriyan.cricscore.models.DetailedScore;
+import com.sakthipriyan.cricscore.models.DetailedScore.Status;
 
 public class MainActivity extends SherlockActivity {
 
 	public static final String UPDATE_MATCHES = "com.sakthipriyan.cricscore.UPDATE_MATCHES";
 	public static final String UPDATE_STARTED = "com.sakthipriyan.cricscore.UPDATE_STARTED";
 	public static final String UPDATE_COMPLETED = "com.sakthipriyan.cricscore.UPDATE_COMPLETED";
+	public static final String UPDATE_NONE = "com.sakthipriyan.cricscore.UPDATE_NONE";
 	private static final String TAG = MainActivity.class.getSimpleName();
 
 	// For local reference
@@ -48,7 +51,7 @@ public class MainActivity extends SherlockActivity {
 	private boolean bound = false;
 	private CricScoreReceiver receiver;
 	private IntentFilter filter;
-	private List<Score> matches;
+	private List<DetailedScore> liveScores;
 	private MatchAdapter matchAdapter;
 	private Set<Integer> liveMatches;
 	private MenuItem refreshItem;
@@ -63,7 +66,8 @@ public class MainActivity extends SherlockActivity {
 		this.filter = new IntentFilter(UPDATE_MATCHES);
 		this.filter.addAction(UPDATE_STARTED);
 		this.filter.addAction(UPDATE_COMPLETED);
-		this.matches = new ArrayList<Score>();
+		this.filter.addAction(UPDATE_NONE);
+		this.liveScores = new ArrayList<DetailedScore>(20);
 		this.liveMatches = new HashSet<Integer>();
 		this.matchAdapter = new MatchAdapter(cxt);
 		Log.d(TAG, "onCreate");
@@ -121,36 +125,37 @@ public class MainActivity extends SherlockActivity {
 		}
 	}
 
-	private void matchClicked(Score score, View view) {
-		Integer id = score.getId();
+	private void matchClicked(DetailedScore score, View view) {
+		int id = score.getMatchId();
 		if (liveMatches.contains(id)) {
-			view.setBackgroundResource(0);
+			// view.setBackgroundResource(0);
 			liveMatches.remove(id);
 			cricScoreAPI.removeMatch(id);
-			//Toast.makeText(cxt, score.getTeam1() + " vs "  + score.getTeam2() + " removed", Toast.LENGTH_LONG).show();
+			score.setStatus(Status.MATCH);
+			matchAdapter.notifyDataSetChanged();
 		} else {
-			view.setBackgroundColor(getResources().getColor(R.color.light_red));
+			view.setBackgroundColor(getResources().getColor(R.color.light_yellow));
 			liveMatches.add(id);
 			cricScoreAPI.addMatch(id);
-			//Toast.makeText(cxt, score.getTeam1() + " vs "  + score.getTeam2() + " added", Toast.LENGTH_LONG).show();
 		}
 	}
 
 	private void showAllMatches() {
-		this.matches = cricScoreAPI.listMatches();
-		final ListView list = (ListView) findViewById(R.id.matchList);
+		this.liveScores.clear();
+		this.liveScores.addAll(cricScoreAPI.listMatches());
+		final ListView list = (ListView) findViewById(R.id.content);
 		list.setAdapter(matchAdapter);
 		list.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view,
 					int position, long id) {
-				Score score = ((Score) list.getItemAtPosition(position));
+				DetailedScore score = (DetailedScore) list
+						.getItemAtPosition(position);
 				matchClicked(score, view);
 			}
 		});
-		final LinearLayout progress = (LinearLayout) findViewById(R.id.loadingInProgress);
-		progress.setVisibility(View.GONE);
-		final LinearLayout content = (LinearLayout) findViewById(R.id.content);
-		content.setVisibility(View.VISIBLE);
+		((LinearLayout) findViewById(R.id.loadingInProgress))
+				.setVisibility(View.GONE);
+		list.setVisibility(View.VISIBLE);
 	}
 
 	private void refreshStart() {
@@ -169,6 +174,7 @@ public class MainActivity extends SherlockActivity {
 	}
 
 	private void refreshEnd() {
+
 		if (this.refreshItem != null
 				&& this.refreshItem.getActionView() != null) {
 			this.refreshItem.getActionView().clearAnimation();
@@ -183,43 +189,114 @@ public class MainActivity extends SherlockActivity {
 			mInflater = LayoutInflater.from(context);
 		}
 
+		@Override
 		public int getCount() {
-			return matches.size();
+			return liveScores.size();
 		}
 
+		@Override
 		public Object getItem(int position) {
-			return matches.get(position);
+			return liveScores.get(position);
 		}
 
+		@Override
 		public long getItemId(int position) {
-			return position;
+			return liveScores.get(position).getMatchId();
 		}
 
-		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder holder;
-			if (convertView == null) {
-				convertView = mInflater.inflate(R.layout.matchview, null);
-				holder = new ViewHolder();
-				holder.text = (TextView) convertView.findViewById(R.id.TeamOne);
-				holder.text2 = (TextView) convertView
-						.findViewById(R.id.TeamTwo);
-				convertView.setTag(holder);
-			} else {
-				holder = (ViewHolder) convertView.getTag();
-			}
-			try {
-				Score score = matches.get(position);
-				holder.text.setText(score.getTeam1());
+		@Override
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
+			View view = convertView;
+			System.out.println(liveScores.size());
+			System.out.println(position);
+			// if (view == null) {
+			DetailedScore score = liveScores.get(position);
+			Log.d(TAG, "score " + score);
+			switch (score.getStatus()) {
+			case MATCH:
+				MatchViewHolder holder = new MatchViewHolder();
+				view = mInflater.inflate(R.layout.matchview, null);
+				holder.text1 = (TextView) view.findViewById(R.id.TeamOne);
+				holder.text2 = (TextView) view.findViewById(R.id.TeamTwo);
+
+				holder.text1.setText(score.getTeam1());
 				holder.text2.setText(score.getTeam2());
-			} catch (ArrayIndexOutOfBoundsException e) {
+				view.setTag(holder);
+				break;
+			case LIVE:
+				view = mInflater.inflate(R.layout.detail_view, null);
+				((TextView) view.findViewById(R.id.team1)).setText(score.getTeam1());
+				((TextView) view.findViewById(R.id.team1s1)).setText(score.getScoret1s1());
+				((TextView) view.findViewById(R.id.team1s2)).setText(score.getScoret1s2());
+				
+				((TextView) view.findViewById(R.id.team2)).setText(score.getTeam2());
+				((TextView) view.findViewById(R.id.team2s1)).setText(score.getScoret2s1());
+				((TextView) view.findViewById(R.id.team2s2)).setText(score.getScoret2s2());
+				
+				((TextView) view.findViewById(R.id.teamshort)).setText(score.getPlayingTeam());
+				((TextView) view.findViewById(R.id.teamruns)).setText(score.getPlayingScore());
+				((TextView) view.findViewById(R.id.teamovers)).setText(score.getPlayingOver());
+				
+				((TextView) view.findViewById(R.id.bat1)).setText(score.getBatsman1());
+				((TextView) view.findViewById(R.id.bat1Score)).setText(score.getBatsman1score());
+				((TextView) view.findViewById(R.id.bat2)).setText(score.getBatsman2());
+				((TextView) view.findViewById(R.id.bat2Score)).setText(score.getBatsman2score());
+				((TextView) view.findViewById(R.id.blower)).setText(score.getBowler());
+				((TextView) view.findViewById(R.id.blowerEco)).setText(score.getBowlerEco());
+				
+				String status = score.getMatchStatus();
+				TextView matchStatusView = (TextView) view.findViewById(R.id.match_status);
+				if(DetailedScore.EMPTY.equals(status)){
+					matchStatusView.setText("Live");
+					//matchStatusView.setTextColor(getResources().getColor(R.color.dark_green));
+				} else {
+					matchStatusView.setText(status);
+				}
+				
+				
+				
+				
+				
+				// view.setTag(holder);
+				break;
+			case FUTURE:
+				view = mInflater.inflate(R.layout.detail_view, null);
+				// view.setTag(holder);
+				break;
 
+			default:
+				Log.e(TAG, "Wrong type");
 			}
-
-			return convertView;
+			// }
+			return view;
 		}
 
-		class ViewHolder {
-			TextView text;
+		/*
+		 * public View getView1(int position, View convertView, ViewGroup
+		 * parent) { ViewHolder holder; if (convertView == null) { convertView =
+		 * mInflater.inflate(R.layout.matchview, null); holder = new
+		 * ViewHolder(); holder.text = (TextView)
+		 * convertView.findViewById(R.id.TeamOne); holder.text2 = (TextView)
+		 * convertView .findViewById(R.id.TeamTwo); convertView.setTag(holder);
+		 * } else { holder = (ViewHolder) convertView.getTag(); } try { Score
+		 * score = (Score) liveScores.get(position);
+		 * holder.text.setText(score.getTeam1());
+		 * holder.text2.setText(score.getTeam2()); } catch
+		 * (ArrayIndexOutOfBoundsException e) {
+		 * 
+		 * }
+		 * 
+		 * return convertView; }
+		 */
+
+		@Override
+		public int getViewTypeCount() {
+			return 2;
+		}
+
+		class MatchViewHolder {
+			TextView text1;
 			TextView text2;
 		}
 	}
@@ -227,11 +304,20 @@ public class MainActivity extends SherlockActivity {
 	private class CricScoreReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (UPDATE_MATCHES.equals(intent.getAction())) {
+			String action = intent.getAction();
+			if (UPDATE_MATCHES.equals(action)) {
 				showAllMatches();
-			} else if (UPDATE_STARTED.equals(intent.getAction())) {
+			} else if (UPDATE_STARTED.equals(action)) {
 				refreshStart();
-			} else if (UPDATE_COMPLETED.equals(intent.getAction())) {
+			} else if (UPDATE_COMPLETED.equals(action)) {
+				for (DetailedScore score : cricScoreAPI.getLiveScores()) {
+					int index = liveScores.indexOf(score);
+					liveScores.remove(index);
+					liveScores.add(index, score);
+				}
+				matchAdapter.notifyDataSetChanged();
+				refreshEnd();
+			} else if (UPDATE_NONE.equals(action)) {
 				refreshEnd();
 			}
 		}
